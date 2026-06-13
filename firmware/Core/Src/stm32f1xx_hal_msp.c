@@ -186,33 +186,22 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* hadc)
   */
 void HAL_I2C_MspInit(I2C_HandleTypeDef* hi2c)
 {
-  GPIO_InitTypeDef GPIO_InitStruct = {0};
-  if(hi2c->Instance==I2C1)
-  {
-    /* USER CODE BEGIN I2C1_MspInit 0 */
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
 
-    /* USER CODE END I2C1_MspInit 0 */
+    if (hi2c->Instance == I2C1)
+    {
+        __HAL_RCC_GPIOB_CLK_ENABLE();
+        __HAL_RCC_AFIO_CLK_ENABLE();
+        __HAL_RCC_I2C1_CLK_ENABLE();
 
-    __HAL_RCC_GPIOB_CLK_ENABLE();
-    /**I2C1 GPIO Configuration
-    PB8     ------> I2C1_SCL
-    PB9     ------> I2C1_SDA
-    */
-    GPIO_InitStruct.Pin = GPIO_PIN_8|GPIO_PIN_9;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+        // Remap I2C1: PB6/PB7 -> PB8/PB9
+        __HAL_AFIO_REMAP_I2C1_ENABLE();
 
-    __HAL_AFIO_REMAP_I2C1_ENABLE();
-
-    /* Peripheral clock enable */
-    __HAL_RCC_I2C1_CLK_ENABLE();
-    /* USER CODE BEGIN I2C1_MspInit 1 */
-
-    /* USER CODE END I2C1_MspInit 1 */
-
-  }
-
+        GPIO_InitStruct.Pin = GPIO_PIN_8 | GPIO_PIN_9;
+        GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
+        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+        HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+    }
 }
 
 /**

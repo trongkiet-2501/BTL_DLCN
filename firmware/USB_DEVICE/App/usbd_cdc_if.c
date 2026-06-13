@@ -261,7 +261,7 @@ static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
   /* USER CODE BEGIN 6 */
   USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &Buf[0]);
   USBD_CDC_ReceivePacket(&hUsbDeviceFS);
-  CDC_Transmit_FS(UserRxBufferFS, strlen((const char*)UserRxBufferFS) - 1); // Echo back the received data
+  CDC_Transmit_FS(Buf, *Len); // Echo back the received data
   for (int i = 0; i < APP_RX_DATA_SIZE; i++) {
     UserRxBufferFS[i] = 0; // delete the received data after processing
   }
