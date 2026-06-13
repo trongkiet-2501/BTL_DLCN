@@ -102,7 +102,7 @@ typedef struct
     float thermistor_degC;
     float potentiometer_deg;
     float ultrasonic_cm;
-    float laser_mm;
+    float laser_cm;
 } SensorData_t;
 
 static SensorData_t sensor_data;
@@ -314,10 +314,7 @@ float Read_Thermistor_Raw_degC(void)
 
     float Vout = adc_raw * Vref / 4095.0f;
 
-    if (Vout < Vmin || Vout > Vmax)
-    {
-        return -999.0f;
-    }
+    Vout = Clamp_Float(Vout, Vmin, Vmax);
 
     float temp_degC = (Vout - Vmin) * 100.0f / (Vmax - Vmin);
 
@@ -378,6 +375,9 @@ float Read_Ultrasonic_Raw_cm(float tempC)
 
     float speed_cm_us = (331.4f + 0.6f * tempC) * 100.0f / 1000000.0f;
     float distance_cm = ultrasonic_echo_us * speed_cm_us / 2.0f;
+
+    if (distance_cm > 50.0f) distance_cm = 50.0f;
+    if (distance_cm < 0.0f) distance_cm = 0.0f;
 
     return distance_cm;
 }
@@ -453,24 +453,24 @@ void Test_Laser_Raw_UART(void)
 
     UART_Send_Text(tx);
 }
-float Read_Laser_Raw_mm(void)
+float Read_Laser_Raw_cm(void)
 {
     uint16_t raw_mm = lidar_lee_mm(dir_s1);
 
     laser_raw_mm_last = raw_mm;
 
-    // Bỏ qua lọc lỗi tạm thời để xem sensor thực sự trả về bao nhiêu
-    // if (raw_mm == 0 || raw_mm == 8190 || raw_mm > 2000)
-    // {
-    //     return -1.0f;
-    // }
+    if (raw_mm >= 1000 && raw_mm <= 1100) return -1.0f; // I2C ERROR
 
-    return (float)raw_mm;
+    float raw_cm = raw_mm / 10.0f;
+    if (raw_cm > 100.0f) raw_cm = 100.0f;
+    if (raw_cm < 0.0f) raw_cm = 0.0f;
+
+    return raw_cm;
 }
 
-float Read_Laser_VL53L0X_mm(void)
+float Read_Laser_VL53L0X_cm(void)
 {
-    float raw = Read_Laser_Raw_mm();
+    float raw = Read_Laser_Raw_cm();
 
     if (raw < 0.0f)
     {
@@ -480,7 +480,10 @@ float Read_Laser_VL53L0X_mm(void)
 
     float calib_value = Apply_Calib(&calib_laser, raw);
 
-    laser_calib_mm_last = (uint16_t)calib_value;
+    if (calib_value > 100.0f) calib_value = 100.0f;
+    if (calib_value < 0.0f) calib_value = 0.0f;
+
+    laser_calib_mm_last = (uint16_t)(calib_value * 10);
 
     return calib_value;
 }
@@ -532,7 +535,7 @@ float Read_Sensor_Raw_For_Calib(SensorId_t sensor)
             return Read_Potentiometer_Raw_deg();
 
         case SENSOR_LASER:
-            return Read_Laser_Raw_mm();
+            return Read_Laser_Raw_cm();
 
         case SENSOR_ULTRASONIC:
         {
@@ -801,7 +804,7 @@ void Send_Real_Sensor_Data_UART(void)
     char tx_buffer[160];
 
     long t_x10 = lroundf(sensor_data.thermistor_degC * 10.0f);
-    long l_x10 = lroundf(sensor_data.laser_mm * 10.0f);
+    long l_x10 = lroundf(sensor_data.laser_cm * 10.0f);
     long p_x10 = lroundf(sensor_data.potentiometer_deg * 10.0f);
     long u_x10 = lroundf(sensor_data.ultrasonic_cm * 10.0f);
 
@@ -899,7 +902,7 @@ void Sensor_Task_50ms(void)
 
 void Sensor_Task_100ms(void)
 {
-    float laser_value = Read_Laser_VL53L0X_mm();
+    float laser_value = Read_Laser_VL53L0X_cm();
 
     if (laser_value >= 0.0f)
     {
@@ -936,12 +939,12 @@ void Sensor_Compute_Average(void)
 
     if (laser_sample_count > 0)
     {
-        sensor_data.laser_mm =
+        sensor_data.laser_cm =
             laser_sum / laser_sample_count;
     }
     else
     {
-        sensor_data.laser_mm = -1.0f;
+        sensor_data.laser_cm = -1.0f;
     }
 
     if (ultrasonic_sample_count > 0)
@@ -996,7 +999,7 @@ void Send_Raw_Calibration_Data_UART(void)
     uint32_t echo_us = ultrasonic_echo_us;
     
     // 4. Doc Laser RAW/CALIB
-    float laser_calib = Read_Laser_VL53L0X_mm();
+    float laser_calib = Read_Laser_VL53L0X_cm();
 
     int l_calib_int = (int)laser_calib;
     int l_calib_frac = (int)((laser_calib - l_calib_int) * 10);
@@ -1015,7 +1018,7 @@ void Send_Raw_Calibration_Data_UART(void)
         "-> Angle          = %d.%01d deg\r\n"
         "Ultrasonic (us)   = %lu\r\n"
         "Laser raw (mm)    = %u\r\n"
-        "Laser calib (mm)  = %d.%01d\r\n"
+        "Laser calib (cm)  = %d.%01d\r\n"
         "--------------------------\r\n",
         adc1_raw,
         adc2_raw,
