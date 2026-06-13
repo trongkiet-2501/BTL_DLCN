@@ -459,10 +459,11 @@ float Read_Laser_Raw_mm(void)
 
     laser_raw_mm_last = raw_mm;
 
-    if (raw_mm == 0 || raw_mm == 8190 || raw_mm > 2000)
-    {
-        return -1.0f;
-    }
+    // Bỏ qua lọc lỗi tạm thời để xem sensor thực sự trả về bao nhiêu
+    // if (raw_mm == 0 || raw_mm == 8190 || raw_mm > 2000)
+    // {
+    //     return -1.0f;
+    // }
 
     return (float)raw_mm;
 }
