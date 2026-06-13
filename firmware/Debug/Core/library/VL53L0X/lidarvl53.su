@@ -1,4 +1,4 @@
-../Core/library/VL53L0X/lidarvl53.c:22:6:lidar_init	16	static
-../Core/library/VL53L0X/lidarvl53.c:46:10:lidar_lee_mm	8	static
-../Core/library/VL53L0X/lidarvl53.c:57:7:lidar_lee_cm	8	static
-../Core/library/VL53L0X/lidarvl53.c:62:9:lidar_set_dir	8	static
+../Core/library/VL53L0X/lidarvl53.c:25:6:lidar_init	80	static
+../Core/library/VL53L0X/lidarvl53.c:62:10:lidar_lee_mm	8	static
+../Core/library/VL53L0X/lidarvl53.c:73:7:lidar_lee_cm	8	static
+../Core/library/VL53L0X/lidarvl53.c:78:9:lidar_set_dir	8	static

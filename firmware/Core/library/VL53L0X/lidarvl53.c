@@ -7,6 +7,9 @@
 
 
 #include "lidarvl53.h"
+#include <stdio.h>
+
+extern void UART_Send_Text(const char *text);
 
 VL53L0X_RangingMeasurementData_t RangingData;
 VL53L0X_Dev_t  vl53l0x_c; // center module
@@ -26,11 +29,24 @@ void lidar_init(uint8_t dir)
       Dev->comms_type=1;
       Dev->comms_speed_khz=100;//  i2c a 100khz
 
-      VL53L0X_WaitDeviceBooted( Dev );
-	  VL53L0X_DataInit( Dev );
-	  VL53L0X_StaticInit( Dev );
-	  VL53L0X_PerformRefCalibration(Dev, &VhvSettings, &PhaseCal);
-	  VL53L0X_PerformRefSpadManagement(Dev, &refSpadCount, &isApertureSpads);
+      VL53L0X_Error s;
+      char buf[64];
+
+      s = VL53L0X_WaitDeviceBooted( Dev );
+      snprintf(buf, sizeof(buf), "Boot:%d\r\n", s); UART_Send_Text(buf);
+
+	  s = VL53L0X_DataInit( Dev );
+      snprintf(buf, sizeof(buf), "DataInit:%d\r\n", s); UART_Send_Text(buf);
+
+	  s = VL53L0X_StaticInit( Dev );
+      snprintf(buf, sizeof(buf), "StaticInit:%d\r\n", s); UART_Send_Text(buf);
+
+	  s = VL53L0X_PerformRefCalibration(Dev, &VhvSettings, &PhaseCal);
+      snprintf(buf, sizeof(buf), "RefCal:%d\r\n", s); UART_Send_Text(buf);
+
+	  s = VL53L0X_PerformRefSpadManagement(Dev, &refSpadCount, &isApertureSpads);
+      snprintf(buf, sizeof(buf), "Spad:%d\r\n", s); UART_Send_Text(buf);
+
 	  VL53L0X_SetDeviceMode(Dev, VL53L0X_DEVICEMODE_SINGLE_RANGING);
 	  // Enable/Disable Sigma and Signal check
 	  VL53L0X_SetLimitCheckEnable(Dev, VL53L0X_CHECKENABLE_SIGMA_FINAL_RANGE, 1);
@@ -48,7 +64,7 @@ uint16_t lidar_lee_mm(uint8_t dir)
 	Dev->I2cDevAddr = dir;
  	VL53L0X_Error status = VL53L0X_PerformSingleRangingMeasurement(Dev, &RangingData);
     if (status != VL53L0X_ERROR_NONE) {
-        return 0;
+        return (uint16_t)(1000 - status);
     }
  	return RangingData.RangeMilliMeter;
 }
