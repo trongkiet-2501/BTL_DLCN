@@ -359,6 +359,8 @@ float Read_Potentiometer_deg(void)
 float Read_Ultrasonic_Raw_cm(float tempC)
 {
     ultrasonic_data_ready = 0;
+    ultrasonic_capture_state = 0;
+    __HAL_TIM_SET_CAPTUREPOLARITY(&htim4, TIM_CHANNEL_2, TIM_INPUTCHANNELPOLARITY_RISING);
     ultrasonic_echo_us = 0;
 
     Ultrasonic_Trigger();
@@ -367,7 +369,7 @@ float Read_Ultrasonic_Raw_cm(float tempC)
 
     while (!ultrasonic_data_ready)
     {
-        if (HAL_GetTick() - start_tick > 30)
+        if (HAL_GetTick() - start_tick > 60)
         {
             return -1.0f;
         }
@@ -989,12 +991,14 @@ void Send_Raw_Calibration_Data_UART(void)
 
     // 3. Doc Ultrasonic RAW (Echo time in us)
     ultrasonic_data_ready = 0;
+    ultrasonic_capture_state = 0;
+    __HAL_TIM_SET_CAPTUREPOLARITY(&htim4, TIM_CHANNEL_2, TIM_INPUTCHANNELPOLARITY_RISING);
     ultrasonic_echo_us = 0;
     Ultrasonic_Trigger();
     uint32_t start_tick = HAL_GetTick();
     while (!ultrasonic_data_ready)
     {
-        if (HAL_GetTick() - start_tick > 30) break; // Timeout
+        if (HAL_GetTick() - start_tick > 60) break; // Timeout
     }
     uint32_t echo_us = ultrasonic_echo_us;
     
