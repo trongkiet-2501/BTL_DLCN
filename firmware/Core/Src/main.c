@@ -89,6 +89,8 @@ static float thermistor_sum = 0.0f;
 static float potentiometer_sum = 0.0f;
 static float laser_sum = 0.0f;
 static float ultrasonic_sum = 0.0f;
+static float ultrasonic_calib_a = 1.0f;
+static float ultrasonic_calib_b = 0.0f;
 
 static uint8_t thermistor_sample_count = 0;
 static uint8_t potentiometer_sample_count = 0;
@@ -279,6 +281,7 @@ void Ultrasonic_Trigger(void)
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
     Delay_us_TIM4(2);
 
+    // phát xung trig 10us
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
     Delay_us_TIM4(10);
 
@@ -291,8 +294,11 @@ void Ultrasonic_Trigger(void)
    ========================= */
 float Read_Ultrasonic_cm(float tempC)
 {
-    Ultrasonic_Trigger();
+	// reset cờ
+	ultrasonic_data_ready = 0;
+	ultrasonic_echo_us = 0;
 
+    Ultrasonic_Trigger();
     /*
        Cho echo toi da khoang 30ms.
        Neu qua 30ms ma khong co data thi bao loi.
@@ -311,7 +317,7 @@ float Read_Ultrasonic_cm(float tempC)
        v = 331.4 + 0.6*T  m/s
        doi sang cm/us: chia 10000
     */
-    float speed_cm_us = (331.4f + 0.6f * tempC) / 10000.0f;
+    float speed_cm_us = (331.4f + 0.6f * tempC) * 100.0f / 1000000.0f;
 
     /*
        Song di va ve nen chia 2
@@ -321,7 +327,7 @@ float Read_Ultrasonic_cm(float tempC)
     /*
        Calib tuyen tinh:
        distance_calib = a * distance_read + b
-       Sau nay thay a,b bang gia tri calib that.
+       Tạo hàm calib return về giá trị a, b
     */
     const float a = 1.0f;
     const float b = 0.0f;
@@ -329,6 +335,9 @@ float Read_Ultrasonic_cm(float tempC)
     float distance_calib = a * distance_cm + b;
 
     return distance_calib;
+}
+float Calib_Ultrasonic(float a, float b){
+
 }
 
 /* =========================

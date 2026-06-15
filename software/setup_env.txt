@@ -1,0 +1,9 @@
+PyQt5
+pyqtgraph
+pyserial
+
+run this command
+
+C:/Python313/python.exe -m pip install PyQt5
+C:/Python313/python.exe -m pip install pyqtgraph
+C:/Python313/python.exe -m pip install pyserial
