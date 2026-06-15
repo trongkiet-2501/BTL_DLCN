@@ -1,0 +1,4 @@
+../Core/library/VL53L0X/lidarvl53.c:25:6:lidar_init	1
+../Core/library/VL53L0X/lidarvl53.c:62:10:lidar_lee_mm	2
+../Core/library/VL53L0X/lidarvl53.c:73:7:lidar_lee_cm	1
+../Core/library/VL53L0X/lidarvl53.c:78:9:lidar_set_dir	1

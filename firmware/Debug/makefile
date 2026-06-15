@@ -14,6 +14,9 @@ RM := rm -rf
 -include Middlewares/ST/STM32_USB_Device_Library/Core/Src/subdir.mk
 -include Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/subdir.mk
 -include Drivers/STM32F1xx_HAL_Driver/Src/subdir.mk
+-include Core/library/VL53L0X/platform/src/subdir.mk
+-include Core/library/VL53L0X/core/src/subdir.mk
+-include Core/library/VL53L0X/subdir.mk
 -include Core/Startup/subdir.mk
 -include Core/Src/subdir.mk
 -include objects.mk
@@ -67,8 +70,13 @@ all: main-build
 main-build: dlcn.elf secondary-outputs
 
 # Tool invocations
+<<<<<<< HEAD
 dlcn.elf dlcn.map: $(OBJS) $(USER_OBJS) F:\Downloads\BTL_DLCN\firmware\STM32F103C8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	arm-none-eabi-gcc -o "dlcn.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"F:\Downloads\BTL_DLCN\firmware\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="dlcn.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+=======
+dlcn.elf dlcn.map: $(OBJS) $(USER_OBJS) F:\Downloads\BTL_DLCN\ (1)\firmware\STM32F103C8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "dlcn.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"F:\Downloads\BTL_DLCN (1)\firmware\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="dlcn.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+>>>>>>> a1e0be87dd45b314ed2ff2e354f211ce14c7a150
 	@echo 'Finished building target: $@'
 	@echo ' '
 

@@ -25,6 +25,9 @@ C_DEPS :=
 SUBDIRS := \
 Core/Src \
 Core/Startup \
+Core/library/VL53L0X/core/src \
+Core/library/VL53L0X \
+Core/library/VL53L0X/platform/src \
 Drivers/STM32F1xx_HAL_Driver/Src \
 Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src \
 Middlewares/ST/STM32_USB_Device_Library/Core/Src \

@@ -1,0 +1,10 @@
+../Core/library/VL53L0X/platform/src/vl53l0x_platform.c:31:15:VL53L0X_WriteMulti	24	static
+../Core/library/VL53L0X/platform/src/vl53l0x_platform.c:43:15:VL53L0X_ReadMulti	24	static
+../Core/library/VL53L0X/platform/src/vl53l0x_platform.c:56:15:VL53L0X_WrByte	16	static
+../Core/library/VL53L0X/platform/src/vl53l0x_platform.c:60:15:VL53L0X_WrWord	16	static
+../Core/library/VL53L0X/platform/src/vl53l0x_platform.c:67:15:VL53L0X_WrDWord	16	static
+../Core/library/VL53L0X/platform/src/vl53l0x_platform.c:89:15:VL53L0X_RdByte	0	static
+../Core/library/VL53L0X/platform/src/vl53l0x_platform.c:76:15:VL53L0X_UpdateByte	32	static
+../Core/library/VL53L0X/platform/src/vl53l0x_platform.c:93:15:VL53L0X_RdWord	16	static
+../Core/library/VL53L0X/platform/src/vl53l0x_platform.c:102:15:VL53L0X_RdDWord	16	static
+../Core/library/VL53L0X/platform/src/vl53l0x_platform.c:111:15:VL53L0X_PollingDelay	8	static
